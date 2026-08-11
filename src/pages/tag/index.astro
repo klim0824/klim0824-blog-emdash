@@ -1,0 +1,113 @@
+---
+import { getTaxonomyTerms } from "emdash";
+import Base from "../../layouts/Base.astro";
+
+const tags = await getTaxonomyTerms("tag");
+const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+---
+
+<Base title="Tags" description="Browse all tags">
+	<section class="archive-section">
+		<header class="archive-header">
+			<span class="archive-label">Browse</span>
+			<h1 class="archive-title">Tags</h1>
+			<p class="archive-count">
+				{tags.length}
+				{tags.length === 1 ? "tag" : "tags"}
+			</p>
+		</header>
+
+		{
+			sortedTags.length === 0 ? (
+				<p class="no-posts">No tags yet.</p>
+			) : (
+				<ul class="term-list">
+					{sortedTags.map((tag) => (
+						<li>
+							<a href={`/tag/${tag.slug}`} class="term-link">
+								{tag.label}
+							</a>
+							{tag.count !== undefined && (
+								<span class="term-count">{tag.count}</span>
+							)}
+						</li>
+					))}
+				</ul>
+			)
+		}
+	</section>
+</Base>
+
+<style>
+	.archive-section {
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-12) var(--spacing-6);
+	}
+
+	.archive-header {
+		margin-bottom: var(--spacing-12);
+		padding-bottom: var(--spacing-8);
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	.archive-label {
+		display: block;
+		font-size: var(--font-size-xs);
+		font-weight: 500;
+		color: var(--color-brand);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		margin-bottom: var(--spacing-2);
+	}
+
+	.archive-title {
+		font-size: var(--font-size-4xl);
+		font-weight: var(--font-weight-display);
+		letter-spacing: var(--tracking-tight);
+		margin-bottom: var(--spacing-2);
+	}
+
+	.archive-count {
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+	}
+
+	.no-posts {
+		color: var(--color-muted);
+	}
+
+	.term-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-3);
+	}
+
+	.term-list li {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		padding: var(--spacing-2) var(--spacing-4);
+		background: var(--color-surface);
+		border-radius: var(--radius);
+	}
+
+	.term-link {
+		color: var(--color-text);
+		text-decoration: none;
+		font-weight: 500;
+		transition: color var(--transition-fast);
+	}
+
+	.term-link:hover {
+		color: var(--color-brand);
+	}
+
+	.term-count {
+		font-size: var(--font-size-xs);
+		color: var(--color-muted);
+	}
+</style>
