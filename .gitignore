@@ -5,6 +5,9 @@ dist
 uploads
 data.db
 
+# Migration: local-instance media IDs, not portable across environments
+scripts/migrate/data/media-map.json
+
 # Environment / Wrangler secrets
 .env
 .env.*
