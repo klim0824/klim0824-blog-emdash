@@ -78,9 +78,10 @@ const bylines = post.data.bylines ?? [];
 // Get reading time
 const readingTime = getReadingTime(post.data.content);
 
-// This post's tags are already hydrated onto the entry by getEmDashEntry —
-// no extra query needed.
+// This post's tags/categories are already hydrated onto the entry by
+// getEmDashEntry — no extra query needed.
 const tags = post.data.terms?.tag ?? [];
+const categories = post.data.terms?.category ?? [];
 
 // Fetch a few extra recent posts in case the current post is among them.
 const { entries: recentPosts } = await getEmDashCollection("posts", {
@@ -182,6 +183,20 @@ const publishDate = post.data.published_date
 						<span class="meta-value">{readingTime} min</span>
 					</div>
 					{
+						categories.length > 0 && (
+							<div class="meta-block">
+								<span class="meta-label">Category</span>
+								<div class="meta-tags">
+									{categories.map((c) => (
+										<a href={`/category/${c.slug}`} class="meta-tag">
+											{c.label}
+										</a>
+									))}
+								</div>
+							</div>
+						)
+					}
+					{
 						tags.length > 0 && (
 							<div class="meta-block">
 								<span class="meta-label">Tags</span>
@@ -227,6 +242,22 @@ const publishDate = post.data.published_date
 						}
 						<span>{readingTime} min read</span>
 					</div>
+					{
+						(categories.length > 0 || tags.length > 0) && (
+							<div class="article-terms">
+								{categories.map((c) => (
+									<a href={`/category/${c.slug}`} class="article-term article-term--category">
+										{c.label}
+									</a>
+								))}
+								{tags.map((t) => (
+									<a href={`/tag/${t.slug}`} class="article-term">
+										{t.label}
+									</a>
+								))}
+							</div>
+						)
+					}
 					<h1 class="article-title" {...post.edit.title}>{post.data.title}</h1>
 					{
 						post.data.excerpt && (
@@ -495,6 +526,41 @@ const publishDate = post.data.published_date
 		font-size: var(--font-size-sm);
 		color: var(--color-muted);
 		margin-bottom: var(--spacing-4);
+	}
+
+	.article-terms {
+		display: none;
+		flex-wrap: wrap;
+		gap: var(--spacing-2);
+		margin-bottom: var(--spacing-4);
+	}
+
+	.article-term {
+		display: inline-block;
+		padding: var(--tag-padding-y) var(--spacing-2);
+		font-size: var(--font-size-xs);
+		color: var(--color-text-secondary);
+		background: var(--color-surface);
+		border-radius: var(--radius);
+		text-decoration: none;
+		transition:
+			color var(--transition-fast),
+			background var(--transition-fast);
+	}
+
+	.article-term:hover {
+		color: var(--color-text);
+		background: var(--color-border);
+	}
+
+	.article-term--category {
+		color: var(--color-on-brand);
+		background: var(--color-brand);
+	}
+
+	.article-term--category:hover {
+		background: var(--color-brand-hover);
+		color: var(--color-on-brand);
 	}
 
 	.article-meta-byline {
@@ -944,6 +1010,10 @@ const publishDate = post.data.published_date
 		}
 
 		.article-header .article-meta {
+			display: flex;
+		}
+
+		.article-terms {
 			display: flex;
 		}
 	}
