@@ -2,11 +2,14 @@
 import { getEmDashCollection, getTermsForEntries } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { getReadingTime } from "../../utils/reading-time";
+import { getPostUrl } from "../../utils/post-url";
 
 // Sort in the database rather than in JS — lets the DB use its index on
-// published_at and avoids a full-table scan on the client.
+// published_date and avoids a full-table scan on the client. published_date
+// carries the real historical publish date; the system published_at is only
+// when the row was migrated/created.
 const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
-	orderBy: { published_at: "desc" },
+	orderBy: { published_date: "desc" },
 });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
@@ -31,6 +34,7 @@ const formatDate = (date: Date) =>
 		year: "numeric",
 		month: "long",
 		day: "numeric",
+		timeZone: "UTC",
 	});
 ---
 
@@ -51,7 +55,7 @@ const formatDate = (date: Date) =>
 				<div class="posts-list">
 					{postsWithTags.map(({ post, tags, bylines }) => (
 						<article class="post-item">
-							<a href={`/posts/${post.id}`} class="post-link">
+							<a href={getPostUrl(post)} class="post-link">
 								<div class="post-meta">
 									{bylines.length > 0 && (
 										<>
@@ -80,10 +84,10 @@ const formatDate = (date: Date) =>
 											<span class="meta-dot" />
 										</>
 									)}
-									{post.data.publishedAt && (
-										<time>{formatDate(post.data.publishedAt)}</time>
+									{post.data.published_date && (
+										<time>{formatDate(new Date(post.data.published_date))}</time>
 									)}
-									{post.data.publishedAt && <span class="meta-dot" />}
+									{post.data.published_date && <span class="meta-dot" />}
 									<span>{getReadingTime(post.data.content)} min read</span>
 								</div>
 								<h2 class="post-title">{post.data.title}</h2>

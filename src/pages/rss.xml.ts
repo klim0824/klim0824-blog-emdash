@@ -2,22 +2,25 @@ import type { APIRoute } from "astro";
 import { getEmDashCollection, getSiteSettings } from "emdash";
 
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import { getPostUrl } from "../utils/post-url";
 
 export const GET: APIRoute = async ({ site, url }) => {
 	const siteUrl = site?.toString() || url.origin;
 	const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
 
+	// published_date carries the real historical publish date; the system
+	// published_at is only when the row was migrated/created.
 	const { entries: posts } = await getEmDashCollection("posts", {
-		orderBy: { published_at: "desc" },
+		orderBy: { published_date: "desc" },
 		limit: 20,
 	});
 
 	const items = posts
 		.map((post) => {
-			if (!post.data.publishedAt) return null;
-			const pubDate = post.data.publishedAt.toUTCString();
+			if (!post.data.published_date) return null;
+			const pubDate = new Date(post.data.published_date).toUTCString();
 
-			const postUrl = `${siteUrl}/posts/${post.id}`;
+			const postUrl = `${siteUrl}${getPostUrl(post)}`;
 			const title = escapeXml(post.data.title || "Untitled");
 			const description = escapeXml(post.data.excerpt || "");
 
