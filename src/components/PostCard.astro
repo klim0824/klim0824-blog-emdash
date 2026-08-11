@@ -42,7 +42,9 @@ const formattedDate = date
 					<Image image={featuredImage} />
 				</div>
 			) : (
-				<div class="card-placeholder" />
+				<div class="card-placeholder">
+					<img src="/icon-512.png" alt="" class="card-placeholder-icon" />
+				</div>
 			)
 		}
 		<div class="card-body">
@@ -140,9 +142,18 @@ const formattedDate = date
 
 	.card-placeholder {
 		aspect-ratio: 16 / 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: var(--radius-lg);
-		background: var(--color-surface);
+		background: #000;
 		margin-bottom: var(--spacing-4);
+	}
+
+	.card-placeholder-icon {
+		width: 30%;
+		height: 30%;
+		object-fit: contain;
 	}
 
 	.card-body {
