@@ -4,7 +4,9 @@ import Base from "../../layouts/Base.astro";
 import { getTagIconMap } from "../../utils/tag-icons";
 
 const tags = await getTaxonomyTerms("tag");
-const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+const sortedTags = tags
+	.filter((tag) => (tag.count ?? 0) > 0)
+	.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 const tagIconBySlug = await getTagIconMap();
 ---
 
@@ -14,8 +16,8 @@ const tagIconBySlug = await getTagIconMap();
 			<span class="archive-label">Browse</span>
 			<h1 class="archive-title">Tags</h1>
 			<p class="archive-count">
-				{tags.length}
-				{tags.length === 1 ? "tag" : "tags"}
+				{sortedTags.length}
+				{sortedTags.length === 1 ? "tag" : "tags"}
 			</p>
 		</header>
 

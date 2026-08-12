@@ -3,9 +3,9 @@ import { getTaxonomyTerms } from "emdash";
 import Base from "../../layouts/Base.astro";
 
 const categories = await getTaxonomyTerms("category");
-const sortedCategories = [...categories].sort(
-	(a, b) => (b.count ?? 0) - (a.count ?? 0),
-);
+const sortedCategories = categories
+	.filter((category) => (category.count ?? 0) > 0)
+	.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 ---
 
 <Base title="Categories" description="Browse all categories">
@@ -14,8 +14,8 @@ const sortedCategories = [...categories].sort(
 			<span class="archive-label">Browse</span>
 			<h1 class="archive-title">Categories</h1>
 			<p class="archive-count">
-				{categories.length}
-				{categories.length === 1 ? "category" : "categories"}
+				{sortedCategories.length}
+				{sortedCategories.length === 1 ? "category" : "categories"}
 			</p>
 		</header>
 
