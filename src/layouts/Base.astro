@@ -159,6 +159,8 @@ const isLoggedIn = !!Astro.locals.user;
 						<ul class="footer-links">
 							<li><a href="/">Home</a></li>
 							<li><a href="/posts">All Posts</a></li>
+							<li><a href="/category/">Categories</a></li>
+							<li><a href="/tag/">Tags</a></li>
 							{
 								pages.slice(0, 3).map((page) => (
 									<li>
