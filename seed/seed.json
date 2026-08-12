@@ -9,6 +9,7 @@
 	"settings": {
 		"title": "🐺 射撃しつつ後退",
 		"url": "https://blog.klim0824.dev/",
+		"logo": { "mediaId": "01KZV1M4Z81A6DRWCHGSSMT1GV", "alt": "くりむ" },
 		"social": {
 			"twitter": "https://twitter.com/klim0824",
 			"github": "https://github.com/klim0824",
@@ -218,6 +219,16 @@
 		}
 	],
 	"menus": [
+		{
+			"name": "social",
+			"label": "Social",
+			"items": [
+				{ "type": "custom", "label": "Twitter", "url": "https://twitter.com/klim0824", "target": "_blank" },
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/klim0824", "target": "_blank" },
+				{ "type": "custom", "label": "Facebook", "url": "https://www.facebook.com/klim0824", "target": "_blank" },
+				{ "type": "custom", "label": "Instagram", "url": "https://www.instagram.com/klim0824/", "target": "_blank" }
+			]
+		},
 		{
 			"name": "primary",
 			"label": "Primary Navigation",
