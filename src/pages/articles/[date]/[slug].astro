@@ -83,6 +83,13 @@ const readingTime = getReadingTime(post.data.content);
 const tags = post.data.terms?.tag ?? [];
 const categories = post.data.terms?.category ?? [];
 
+// Tag icons live in a separate collection keyed by tag_slug, not as a
+// taxonomy term field, so they need their own lookup.
+const { entries: tagIconEntries } = await getEmDashCollection("tag_icons");
+const tagIconBySlug = new Map(
+	tagIconEntries.map((entry) => [entry.data.tag_slug, entry.data.icon]),
+);
+
 // Fetch a few extra recent posts in case the current post is among them.
 const { entries: recentPosts } = await getEmDashCollection("posts", {
 	orderBy: { published_date: "desc" },
@@ -203,6 +210,13 @@ const publishDate = post.data.published_date
 								<div class="meta-tags">
 									{tags.map((t) => (
 										<a href={`/tag/${t.slug}`} class="meta-tag">
+											{tagIconBySlug.get(t.slug) && (
+												<img
+													src={`/_emdash/api/media/file/${tagIconBySlug.get(t.slug)?.meta?.storageKey}`}
+													alt=""
+													class="meta-tag-icon"
+												/>
+											)}
 											{t.label}
 										</a>
 									))}
@@ -252,6 +266,13 @@ const publishDate = post.data.published_date
 								))}
 								{tags.map((t) => (
 									<a href={`/tag/${t.slug}`} class="article-term">
+										{tagIconBySlug.get(t.slug) && (
+											<img
+												src={`/_emdash/api/media/file/${tagIconBySlug.get(t.slug)?.meta?.storageKey}`}
+												alt=""
+												class="article-term-icon"
+											/>
+										)}
 										{t.label}
 									</a>
 								))}
@@ -455,7 +476,9 @@ const publishDate = post.data.published_date
 	}
 
 	.meta-tag {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-1);
 		padding: var(--tag-padding-y) var(--spacing-2);
 		font-size: var(--font-size-xs);
 		color: var(--color-text-secondary);
@@ -470,6 +493,12 @@ const publishDate = post.data.published_date
 	.meta-tag:hover {
 		color: var(--color-text);
 		background: var(--color-border);
+	}
+
+	.meta-tag-icon {
+		width: 12px;
+		height: 12px;
+		object-fit: contain;
 	}
 
 	/* Byline styles */
@@ -536,7 +565,9 @@ const publishDate = post.data.published_date
 	}
 
 	.article-term {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-1);
 		padding: var(--tag-padding-y) var(--spacing-2);
 		font-size: var(--font-size-xs);
 		color: var(--color-text-secondary);
@@ -551,6 +582,12 @@ const publishDate = post.data.published_date
 	.article-term:hover {
 		color: var(--color-text);
 		background: var(--color-border);
+	}
+
+	.article-term-icon {
+		width: 12px;
+		height: 12px;
+		object-fit: contain;
 	}
 
 	.article-term--category {
