@@ -206,7 +206,15 @@
 			"slug": "klim0824",
 			"displayName": "くりむ",
 			"bio": "フロントエンドエンジニア志望の\nマークアップエンジニア中級者兼\nバックエンドエンジニアみならい",
-			"websiteUrl": "https://www.klim0824.dev/"
+			"websiteUrl": "https://www.klim0824.dev/",
+			"avatar": {
+				"storageKey": "01KZV1M4WMR6WDTMXDXPQ72WH8.jpg",
+				"alt": "くりむ",
+				"filename": "klim0824.jpg",
+				"mimeType": "image/jpeg",
+				"width": 768,
+				"height": 768
+			}
 		}
 	],
 	"menus": [
