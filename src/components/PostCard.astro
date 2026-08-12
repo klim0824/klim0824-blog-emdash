@@ -9,7 +9,7 @@ interface Props {
 	href: string;
 	date?: Date;
 	readingTime?: number;
-	tags?: Array<{ slug: string; label: string }>;
+	tags?: Array<{ slug: string; label: string; icon?: MediaValue }>;
 	bylines?: ContentBylineCredit[];
 }
 
@@ -101,6 +101,13 @@ const formattedDate = date
 			<div class="card-tags">
 				{tags.slice(0, 2).map((tag) => (
 					<a href={`/tag/${tag.slug}`} class="card-tag">
+						{tag.icon && (
+							<img
+								src={`/_emdash/api/media/file/${tag.icon.meta?.storageKey}`}
+								alt=""
+								class="card-tag-icon"
+							/>
+						)}
 						{tag.label}
 					</a>
 				))}
@@ -214,7 +221,9 @@ const formattedDate = date
 	}
 
 	.card-tag {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-1);
 		padding: var(--tag-padding-y) var(--spacing-2);
 		font-size: var(--font-size-xs);
 		color: var(--color-text-secondary);
@@ -229,6 +238,15 @@ const formattedDate = date
 	.card-tag:hover {
 		color: var(--color-text);
 		background: var(--color-border);
+	}
+
+	.card-tag-icon {
+		width: 12px;
+		height: 12px;
+		padding: 2px;
+		border-radius: 50%;
+		background: #fff;
+		object-fit: contain;
 	}
 
 	/* Byline styles */

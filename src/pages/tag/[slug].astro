@@ -9,6 +9,7 @@ import Base from "../../layouts/Base.astro";
 import PostCard from "../../components/PostCard.astro";
 import { getReadingTime } from "../../utils/reading-time";
 import { getPostUrl } from "../../utils/post-url";
+import { getTagIconMap } from "../../utils/tag-icons";
 
 const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm("tag", slug) : null;
@@ -16,6 +17,9 @@ const term = slug ? await getTerm("tag", slug) : null;
 if (!term) {
 	return Astro.redirect("/404");
 }
+
+const tagIconMap = await getTagIconMap();
+const tagIcon = tagIconMap.get(term.slug);
 
 // published_date carries the real historical publish date; the system
 // published_at is only when the row was migrated/created.
@@ -46,7 +50,16 @@ const filteredPosts = posts.map((post) => ({
 	<section class="archive-section">
 		<header class="archive-header">
 			<span class="archive-label">Tag</span>
-			<h1 class="archive-title">{term.label}</h1>
+			<h1 class="archive-title">
+				{tagIcon && (
+					<img
+						src={`/_emdash/api/media/file/${tagIcon.meta?.storageKey}`}
+						alt=""
+						class="archive-title-icon"
+					/>
+				)}
+				{term.label}
+			</h1>
 			<p class="archive-count">
 				{filteredPosts.length}
 				{filteredPosts.length === 1 ? "post" : "posts"}
@@ -66,7 +79,7 @@ const filteredPosts = posts.map((post) => ({
 							href={getPostUrl(post)}
 							date={post.data.published_date ? new Date(post.data.published_date) : undefined}
 							readingTime={getReadingTime(post.data.content)}
-							tags={tags.map((t) => ({ slug: t.slug, label: t.label }))}
+							tags={tags.map((t) => ({ slug: t.slug, label: t.label, icon: tagIconMap.get(t.slug) }))}
 						/>
 					))}
 				</div>
@@ -99,10 +112,22 @@ const filteredPosts = posts.map((post) => ({
 	}
 
 	.archive-title {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-3);
 		font-size: var(--font-size-4xl);
 		font-weight: var(--font-weight-display);
 		letter-spacing: var(--tracking-tight);
 		margin-bottom: var(--spacing-2);
+	}
+
+	.archive-title-icon {
+		width: 0.7em;
+		height: 0.7em;
+		padding: 0.15em;
+		border-radius: 50%;
+		background: #fff;
+		object-fit: contain;
 	}
 
 	.archive-count {

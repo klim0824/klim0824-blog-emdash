@@ -10,6 +10,7 @@ import PostCard from "../components/PostCard.astro";
 import { getReadingTime } from "../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 import { getPostUrl } from "../utils/post-url";
+import { getTagIconMap } from "../utils/tag-icons";
 
 // Limit to what we render (1 featured + 6 grid). The DB does the slicing
 // instead of fetching every post and discarding the tail in JS.
@@ -46,7 +47,10 @@ const tagEntryIds = [
 	...(featuredPost ? [featuredPost.data.id] : []),
 	...gridPosts.map((p) => p.data.id),
 ];
-const tagsByEntry = await getTermsForEntries("posts", tagEntryIds, "tag");
+const [tagsByEntry, tagIconMap] = await Promise.all([
+	getTermsForEntries("posts", tagEntryIds, "tag"),
+	getTagIconMap(),
+]);
 
 const featuredTags = featuredPost
 	? (tagsByEntry.get(featuredPost.data.id) ?? []).map((t) => ({
@@ -61,6 +65,7 @@ const gridPostsWithTags = gridPosts.map((post) => ({
 	tags: (tagsByEntry.get(post.data.id) ?? []).map((t) => ({
 		slug: t.slug,
 		label: t.label,
+		icon: tagIconMap.get(t.slug),
 	})),
 	bylines: post.data.bylines ?? [],
 }));

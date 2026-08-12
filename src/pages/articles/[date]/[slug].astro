@@ -19,6 +19,7 @@ import PostCard from "../../../components/PostCard.astro";
 import { getReadingTime } from "../../../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../../../utils/site-identity";
 import { formatDateSegment, getPostUrl } from "../../../utils/post-url";
+import { getTagIconMap } from "../../../utils/tag-icons";
 
 const slug = decodeSlug(Astro.params.slug);
 const dateParam = Astro.params.date;
@@ -83,12 +84,7 @@ const readingTime = getReadingTime(post.data.content);
 const tags = post.data.terms?.tag ?? [];
 const categories = post.data.terms?.category ?? [];
 
-// Tag icons live in a separate collection keyed by tag_slug, not as a
-// taxonomy term field, so they need their own lookup.
-const { entries: tagIconEntries } = await getEmDashCollection("tag_icons");
-const tagIconBySlug = new Map(
-	tagIconEntries.map((entry) => [entry.data.tag_slug, entry.data.icon]),
-);
+const tagIconBySlug = await getTagIconMap();
 
 // Fetch a few extra recent posts in case the current post is among them.
 const { entries: recentPosts } = await getEmDashCollection("posts", {
@@ -329,7 +325,7 @@ const publishDate = post.data.published_date
 									href={getPostUrl(p)}
 									date={p.data.published_date ? new Date(p.data.published_date) : undefined}
 									readingTime={getReadingTime(p.data.content)}
-									tags={postTags.map((t) => ({ slug: t.slug, label: t.label }))}
+									tags={postTags.map((t) => ({ slug: t.slug, label: t.label, icon: tagIconBySlug.get(t.slug) }))}
 									bylines={postBylines}
 								/>
 							)

@@ -1,9 +1,11 @@
 ---
 import { getTaxonomyTerms } from "emdash";
 import Base from "../../layouts/Base.astro";
+import { getTagIconMap } from "../../utils/tag-icons";
 
 const tags = await getTaxonomyTerms("tag");
 const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+const tagIconBySlug = await getTagIconMap();
 ---
 
 <Base title="Tags" description="Browse all tags">
@@ -25,6 +27,13 @@ const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 					{sortedTags.map((tag) => (
 						<li>
 							<a href={`/tag/${tag.slug}`} class="term-link">
+								{tagIconBySlug.get(tag.slug) && (
+									<img
+										src={`/_emdash/api/media/file/${tagIconBySlug.get(tag.slug)?.meta?.storageKey}`}
+										alt=""
+										class="term-icon"
+									/>
+								)}
 								{tag.label}
 							</a>
 							{tag.count !== undefined && (
@@ -96,6 +105,9 @@ const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 	}
 
 	.term-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-1);
 		color: var(--color-text);
 		text-decoration: none;
 		font-weight: 500;
@@ -104,6 +116,15 @@ const sortedTags = [...tags].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 
 	.term-link:hover {
 		color: var(--color-brand);
+	}
+
+	.term-icon {
+		width: 14px;
+		height: 14px;
+		padding: 2px;
+		border-radius: 50%;
+		background: #fff;
+		object-fit: contain;
 	}
 
 	.term-count {
