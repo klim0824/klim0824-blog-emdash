@@ -146,7 +146,7 @@ function formatDate(date: string | null | undefined) {
 									href={getPostUrl(featuredPost)}
 									class="featured-title-link"
 								>
-									<h1 class="featured-title">{featuredPost.data.title}</h1>
+									<p class="featured-title">{featuredPost.data.title}</p>
 								</a>
 								{featuredPost.data.excerpt && (
 									<p class="featured-excerpt">{featuredPost.data.excerpt}</p>
@@ -310,6 +310,7 @@ function formatDate(date: string | null | undefined) {
 	}
 
 	.featured-title {
+		margin: 0;
 		font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
 		font-weight: var(--font-weight-display);
 		line-height: var(--leading-tight);

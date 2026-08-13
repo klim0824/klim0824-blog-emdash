@@ -41,7 +41,7 @@ const {
 	author,
 	content,
 } = Astro.props;
-const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(await getSiteSettings());
+const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
 // If title already includes site title (from getSeoMeta), use as-is
 const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
 
@@ -75,6 +75,11 @@ const pageCtx = createPublicPageContext({
 
 // Check if user is logged in (for showing admin link)
 const isLoggedIn = !!Astro.locals.user;
+
+// The homepage's h1 is the site name; every other page has its own more
+// specific h1 (article title, tag name, etc.), so the header logo/title
+// link is a heading only here.
+const isHomepage = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
@@ -103,12 +108,15 @@ const isLoggedIn = !!Astro.locals.user;
 		<EmDashBodyStart page={pageCtx} />
 		<header class="site-header">
 			<nav class="nav">
-				<a href="/" class="site-title">
-					{siteLogo
-						? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
-						: siteTitle
-					}
-				</a>
+				{
+					isHomepage ? (
+						<h1 class="site-title-heading">
+							<a href="/" class="site-title">{siteTitle}</a>
+						</h1>
+					) : (
+						<a href="/" class="site-title">{siteTitle}</a>
+					)
+				}
 				<div class="nav-right">
 					<LiveSearch
 						placeholder="Search..."
@@ -142,20 +150,16 @@ const isLoggedIn = !!Astro.locals.user;
 			<slot />
 		</main>
 
-		<footer class="site-footer">
+		<footer class="site-footer" aria-labelledby="footer-heading">
+			<h2 id="footer-heading" class="sr-only">Site footer</h2>
 			<div class="footer-inner">
 				<div class="footer-grid">
 					<div class="footer-brand">
-						<a href="/" class="footer-logo">
-							{siteLogo
-								? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
-								: siteTitle
-							}
-						</a>
+						<a href="/" class="footer-logo">{siteTitle}</a>
 						<p class="footer-tagline">{siteTagline}</p>
 					</div>
 					<div class="footer-nav">
-						<h4 class="footer-heading">Navigate</h4>
+						<h3 class="footer-heading">Navigate</h3>
 						<ul class="footer-links">
 							<li><a href="/">Home</a></li>
 							<li><a href="/posts">All Posts</a></li>
@@ -173,7 +177,7 @@ const isLoggedIn = !!Astro.locals.user;
 						</ul>
 					</div>
 					<div class="footer-nav">
-						<h4 class="footer-heading">Connect</h4>
+						<h3 class="footer-heading">Connect</h3>
 						<ul class="footer-links">
 							{
 								socialMenu?.items.map((item) => (
@@ -459,6 +463,18 @@ const isLoggedIn = !!Astro.locals.user;
 		</style>
 
 		<style>
+			.sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+
 			.site-header {
 				position: sticky;
 				top: 0;
@@ -479,6 +495,13 @@ const isLoggedIn = !!Astro.locals.user;
 				height: var(--nav-height);
 			}
 
+			.site-title-heading {
+				margin: 0;
+				font-size: inherit;
+				font-weight: inherit;
+				line-height: 1;
+			}
+
 			.site-title {
 				font-size: var(--font-size-lg);
 				font-weight: 600;
@@ -489,13 +512,6 @@ const isLoggedIn = !!Astro.locals.user;
 
 			.site-title:hover {
 				color: var(--color-brand);
-			}
-
-			.site-logo-img {
-				height: 48px;
-				width: auto;
-				display: block;
-				margin: -8px 0;
 			}
 
 			.nav-right {
