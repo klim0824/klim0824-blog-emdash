@@ -208,6 +208,7 @@ const isLoggedIn = !!Astro.locals.user;
 							type="button"
 							class="theme-btn"
 							data-theme="light"
+							aria-pressed="false"
 							aria-label="Light mode"
 						>
 							<svg
@@ -239,6 +240,7 @@ const isLoggedIn = !!Astro.locals.user;
 							type="button"
 							class="theme-btn"
 							data-theme="dark"
+							aria-pressed="false"
 							aria-label="Dark mode"
 						>
 							<svg
@@ -258,6 +260,7 @@ const isLoggedIn = !!Astro.locals.user;
 							type="button"
 							class="theme-btn"
 							data-theme="system"
+							aria-pressed="false"
 							aria-label="System theme"
 						>
 							<svg
@@ -283,6 +286,13 @@ const isLoggedIn = !!Astro.locals.user;
 		</footer>
 
 		<script>
+			// The LiveSearch component (from the emdash package) only accepts a
+			// placeholder, not an aria-label, so its input's accessible name
+			// would otherwise come from placeholder text alone. Set one directly.
+			document
+				.querySelector(".site-search-input")
+				?.setAttribute("aria-label", "Search");
+
 			// Theme switcher
 			const THEME_REGEX = /theme=([^;]+)/;
 			const themeBtns =
@@ -316,7 +326,9 @@ const isLoggedIn = !!Astro.locals.user;
 
 			function updateActiveBtn(theme: string) {
 				themeBtns.forEach((btn) => {
-					btn.classList.toggle("active", btn.dataset.theme === theme);
+					const isActive = btn.dataset.theme === theme;
+					btn.classList.toggle("active", isActive);
+					btn.setAttribute("aria-pressed", String(isActive));
 				});
 			}
 
@@ -595,6 +607,11 @@ const isLoggedIn = !!Astro.locals.user;
 				outline: none;
 			}
 
+			:global(.site-search-result):focus,
+			:global(.site-search-result.focused) {
+				box-shadow: inset 0 0 0 2px var(--color-brand);
+			}
+
 			:global(.site-search-result .emdash-live-search-result-title) {
 				display: block;
 				font-weight: 500;
@@ -656,11 +673,6 @@ const isLoggedIn = !!Astro.locals.user;
 				color: var(--color-text);
 				text-decoration: none;
 				letter-spacing: var(--tracking-snug);
-			}
-
-			.footer-logo-img {
-				height: 24px;
-				width: auto;
 			}
 
 			.footer-tagline {

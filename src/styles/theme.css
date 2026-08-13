@@ -25,6 +25,11 @@
 */
 
 :root {
+	/* The default --color-muted (#8b8b8b / #6b6b6b) fails WCAG AA contrast
+	   (1.4.3) at the small sizes it's used at (meta labels, term counts):
+	   measured 3.2-3.7:1 against --color-bg/--color-surface in both modes.
+	   These values clear 4.5:1 in both. */
+	--color-muted: light-dark(#666666, #999999);
 }
 
 .nav-admin {
