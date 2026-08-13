@@ -3,6 +3,7 @@ import {
 	getEmDashEntry,
 	getEmDashCollection,
 	getTermsForEntries,
+	getTaxonomyTerms,
 	getSeoMeta,
 	decodeSlug,
 	getSiteSettings,
@@ -85,6 +86,16 @@ const tags = post.data.terms?.tag ?? [];
 const categories = post.data.terms?.category ?? [];
 
 const tagIconBySlug = await getTagIconMap();
+
+// The sidebar's Categories/Tags lists are rendered manually below (rather
+// than via the vendor core:categories/core:tags widgets) so that terms
+// with zero posts can be filtered out, matching /category/ and /tag/.
+const [allCategories, allTags] = await Promise.all([
+	getTaxonomyTerms("category"),
+	getTaxonomyTerms("tag"),
+]);
+const sidebarCategories = allCategories.filter((c) => (c.count ?? 0) > 0);
+const sidebarTags = allTags.filter((t) => (t.count ?? 0) > 0);
 
 // Fetch a few extra recent posts in case the current post is among them.
 const { entries: recentPosts } = await getEmDashCollection("posts", {
@@ -294,16 +305,59 @@ const publishDate = post.data.published_date
 			</div>
 
 			{/* Right gutter: TOC + Sidebar widgets */}
-			<aside class="article-sidebar">
+			<aside class="article-sidebar" aria-labelledby="sidebar-heading">
+				<h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
 				<div class="sidebar-sticky">
 					<nav class="toc" aria-label="Table of contents">
-						<h4 class="toc-title">On this page</h4>
+						<h3 class="toc-title">On this page</h3>
 						<div class="toc-content" id="toc-content">
 							<!-- Populated by JS -->
 						</div>
 					</nav>
 					<div class="sidebar-widgets">
 						<WidgetArea name="sidebar" />
+						<div class="widget">
+							<h3 class="widget__title">Categories</h3>
+							<div class="widget__content">
+								<ul class="widget-categories">
+									{sidebarCategories.length > 0 ? (
+										sidebarCategories.map((c) => (
+											<li>
+												<a href={`/category/${c.slug}`} class="widget-categories__link">
+													{c.label}
+												</a>
+												{c.count !== undefined && (
+													<span class="widget-categories__count">({c.count})</span>
+												)}
+											</li>
+										))
+									) : (
+										<li class="widget-categories__empty">No categories yet</li>
+									)}
+								</ul>
+							</div>
+						</div>
+						<div class="widget">
+							<h3 class="widget__title">Tags</h3>
+							<div class="widget__content">
+								<div class="widget-tags">
+									{sidebarTags.length > 0 ? (
+										<ul class="widget-tags__cloud">
+											{sidebarTags.map((t) => (
+												<li>
+													<a href={`/tag/${t.slug}`} class="widget-tags__link">
+														{t.label}
+													</a>
+												</li>
+											))}
+										</ul>
+									) : (
+										<p class="widget-tags__empty">No tags yet</p>
+									)}
+								</div>
+							</div>
+						</div>
+						<WidgetArea name="sidebar-secondary" />
 					</div>
 				</div>
 			</aside>
@@ -715,6 +769,18 @@ const publishDate = post.data.published_date
 	/* Right column: TOC + Sidebar */
 	.article-sidebar {
 		display: block;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 
 	.sidebar-sticky {

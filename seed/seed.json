@@ -292,23 +292,20 @@
 		{
 			"name": "sidebar",
 			"label": "Sidebar",
-			"description": "Widget area displayed on single post pages",
+			"description": "Widget area displayed on single post pages, above the custom category/tag lists",
 			"widgets": [
 				{
 					"type": "component",
 					"componentId": "core:search",
 					"title": "Search"
-				},
-				{
-					"type": "component",
-					"componentId": "core:categories",
-					"title": "Categories"
-				},
-				{
-					"type": "component",
-					"componentId": "core:tags",
-					"title": "Tags"
-				},
+				}
+			]
+		},
+		{
+			"name": "sidebar-secondary",
+			"label": "Sidebar (secondary)",
+			"description": "Widget area displayed on single post pages, below the custom category/tag lists",
+			"widgets": [
 				{
 					"type": "component",
 					"componentId": "core:recent-posts",
