@@ -314,15 +314,6 @@
 						"count": 5,
 						"showDate": true
 					}
-				},
-				{
-					"type": "component",
-					"componentId": "core:archives",
-					"title": "Archives",
-					"settings": {
-						"type": "monthly",
-						"limit": 6
-					}
 				}
 			]
 		},

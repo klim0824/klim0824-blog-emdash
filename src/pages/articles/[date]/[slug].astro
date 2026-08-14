@@ -833,6 +833,12 @@ const publishDate = post.data.published_date
 	}
 
 	/* Sidebar widgets */
+	.sidebar-widgets {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-6);
+	}
+
 	.sidebar-widgets :global(.widget-area) {
 		display: flex;
 		flex-direction: column;
@@ -991,43 +997,6 @@ const publishDate = post.data.published_date
 
 	.sidebar-widgets :global(.widget-recent-posts a:hover) {
 		color: var(--color-text);
-	}
-
-	/* Sidebar archives widget */
-	.sidebar-widgets :global(.widget-archives) {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.sidebar-widgets :global(.widget-archives li) {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--spacing-2) 0;
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
-	.sidebar-widgets :global(.widget-archives li:last-child) {
-		border-bottom: none;
-	}
-
-	.sidebar-widgets :global(.widget-archives__link) {
-		color: var(--color-text-secondary);
-		text-decoration: none;
-		transition: color var(--transition-fast);
-	}
-
-	.sidebar-widgets :global(.widget-archives__link:hover) {
-		color: var(--color-text);
-	}
-
-	.sidebar-widgets :global(.widget-archives__count) {
-		font-size: var(--font-size-xs);
-		color: var(--color-muted);
-		background: var(--color-surface);
-		padding: var(--tag-padding-y) var(--spacing-2);
-		border-radius: var(--radius);
 	}
 
 	/* Comments section */
